@@ -8,6 +8,7 @@
 #include "xml_document.h"
 #include "xml_node.h"
 #include "xml_sax_parser.h"
+#include "xml_textwriter.h"
 
 namespace libxmljs {
 
@@ -182,6 +183,7 @@ NAN_MODULE_INIT(init)
 
       XmlDocument::Initialize(target);
       XmlSaxParser::Initialize(target);
+      XmlTextWriter::Initialize(target);
 
       Nan::Set(target, Nan::New<v8::String>("libxml_version").ToLocalChecked(),
                   Nan::New<v8::String>(LIBXML_DOTTED_VERSION).ToLocalChecked());
