@@ -7,7 +7,7 @@
 
 namespace libxmljs {
 
-class XmlTextWriter : public node::ObjectWrap {
+class XmlTextWriter : public Nan::ObjectWrap {
   public:
 
   XmlTextWriter();
