@@ -1,4 +1,6 @@
 // Copyright 2011, Squish Tech, LLC.
+
+#include "libxmljs.h"
 #include "xml_textwriter.h"
 
 namespace libxmljs {
@@ -17,41 +19,35 @@ XmlTextWriter::~XmlTextWriter() {
   }
 }
 
-v8::Handle<v8::Value>
-XmlTextWriter::NewTextWriter(const v8::Arguments& args) {
-  v8::HandleScope scope;
-
+NAN_METHOD(XmlTextWriter::NewTextWriter) {
+  NanScope();
   XmlTextWriter *writer = new XmlTextWriter();
-  writer->Wrap(args.This());
+  writer->Wrap(args.Holder());
 
-  return scope.Close(args.This());
+  NanReturnValue(args.Holder());
 }
 
-v8::Handle<v8::Value>
-XmlTextWriter::OpenMemory(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlTextWriter::OpenMemory) {
+  NanScope();
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
 
   writer->writerBuffer = xmlBufferCreate();
   if (!writer->writerBuffer) {
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "Failed to create memory buffer")));
+    return NanThrowError("Failed to create memory buffer");
   }
 
   writer->textWriter = xmlNewTextWriterMemory(writer->writerBuffer, 0);
   if (!writer->textWriter) {
     xmlBufferFree(writer->writerBuffer);
-    return ThrowException(v8::Exception::Error(v8::String::New(
-                    "Failed to create buffer writer")));
+    return NanThrowError("Failed to create buffer writer");
   }
 
-  return scope.Close(v8::Undefined());
+  NanReturnValue(NanUndefined());
 }
 
-v8::Handle<v8::Value>
-XmlTextWriter::BufferContent(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlTextWriter::BufferContent) {
+  NanScope();
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
 
@@ -61,14 +57,12 @@ XmlTextWriter::BufferContent(const v8::Arguments& args) {
 
   // Receive bytes from the writerBuffer
   const xmlChar *buf = xmlBufferContent(writer->writerBuffer);
-  v8::Handle<v8::String> result = v8::String::New((const char*)buf);
 
-  return scope.Close(result);
+  NanReturnValue(NanNew<v8::String>((const char*)buf));
 }
 
-v8::Handle<v8::Value>
-XmlTextWriter::BufferEmpty(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlTextWriter::BufferEmpty) {
+  NanScope();
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
 
@@ -79,12 +73,11 @@ XmlTextWriter::BufferEmpty(const v8::Arguments& args) {
   // Clear the memory buffer
   xmlBufferEmpty(writer->writerBuffer);
 
-  return scope.Close(v8::Undefined());
+  NanReturnValue(NanUndefined());
 }
 
-v8::Handle<v8::Value>
-XmlTextWriter::StartDocument(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlTextWriter::StartDocument) {
+  NanScope();
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
 
@@ -98,23 +91,21 @@ XmlTextWriter::StartDocument(const v8::Arguments& args) {
           args[1]->IsUndefined() ? NULL : *encoding,
           args[2]->IsUndefined() ? NULL : *standalone);
 
-  return scope.Close(v8::Number::New((double)result));
+  NanReturnValue(NanNew<v8::Number>((double)result));
 }
 
-v8::Handle<v8::Value>
-XmlTextWriter::EndDocument(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlTextWriter::EndDocument) {
+  NanScope();
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
 
   int result = xmlTextWriterEndDocument(writer->textWriter);
 
-  return scope.Close(v8::Number::New((double)result));
+  NanReturnValue(NanNew<v8::Number>((double)result));
 }
 
-v8::Handle<v8::Value>
-XmlTextWriter::StartElementNS(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlTextWriter::StartElementNS) {
+  NanScope();
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
 
@@ -128,23 +119,21 @@ XmlTextWriter::StartElementNS(const v8::Arguments& args) {
           args[1]->IsUndefined() ? NULL : (const xmlChar*)*name,
           args[2]->IsUndefined() ? NULL : (const xmlChar*)*namespaceURI);
 
-  return scope.Close(v8::Number::New((double)result));
+  NanReturnValue(NanNew<v8::Number>((double)result));
 }
 
-v8::Handle<v8::Value>
-XmlTextWriter::EndElement(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlTextWriter::EndElement) {
+  NanScope();
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
 
   int result = xmlTextWriterEndElement(writer->textWriter);
 
-  return scope.Close(v8::Number::New((double)result));
+  NanReturnValue(NanNew<v8::Number>((double)result));
 }
 
-v8::Handle<v8::Value>
-XmlTextWriter::StartAttributeNS(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlTextWriter::StartAttributeNS) {
+  NanScope();
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
 
@@ -158,67 +147,61 @@ XmlTextWriter::StartAttributeNS(const v8::Arguments& args) {
           args[1]->IsUndefined() ? NULL : (const xmlChar*)*name,
           args[2]->IsUndefined() ? NULL : (const xmlChar*)*namespaceURI);
 
-  return scope.Close(v8::Number::New((double)result));
+  NanReturnValue(NanNew<v8::Number>((double)result));
 }
 
-v8::Handle<v8::Value>
-XmlTextWriter::EndAttribute(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlTextWriter::EndAttribute) {
+  NanScope();
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
 
   int result = xmlTextWriterEndAttribute(writer->textWriter);
 
-  return scope.Close(v8::Number::New((double)result));
+  NanReturnValue(NanNew<v8::Number>((double)result));
 }
 
-v8::Handle<v8::Value>
-XmlTextWriter::StartCdata(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlTextWriter::StartCdata) {
+  NanScope();
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
 
   int result = xmlTextWriterStartCDATA(writer->textWriter);
 
-  return scope.Close(v8::Number::New((double)result));
+  NanReturnValue(NanNew<v8::Number>((double)result));
 }
 
-v8::Handle<v8::Value>
-XmlTextWriter::EndCdata(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlTextWriter::EndCdata) {
+  NanScope();
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
 
   int result = xmlTextWriterEndCDATA(writer->textWriter);
 
-  return scope.Close(v8::Number::New((double)result));
+  NanReturnValue(NanNew<v8::Number>((double)result));
 }
 
-v8::Handle<v8::Value>
-XmlTextWriter::StartComment(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlTextWriter::StartComment) {
+  NanScope();
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
 
   int result = xmlTextWriterStartComment(writer->textWriter);
 
-  return scope.Close(v8::Number::New((double)result));
+  NanReturnValue(NanNew<v8::Number>((double)result));
 }
 
-v8::Handle<v8::Value>
-XmlTextWriter::EndComment(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlTextWriter::EndComment) {
+  NanScope();
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
 
   int result = xmlTextWriterEndComment(writer->textWriter);
 
-  return scope.Close(v8::Number::New((double)result));
+  NanReturnValue(NanNew<v8::Number>((double)result));
 }
 
-v8::Handle<v8::Value>
-XmlTextWriter::WriteString(const v8::Arguments& args) {
-  v8::HandleScope scope;
+NAN_METHOD(XmlTextWriter::WriteString) {
+  NanScope();
 
   XmlTextWriter *writer = ObjectWrap::Unwrap<XmlTextWriter>(args.Holder());
 
@@ -227,78 +210,79 @@ XmlTextWriter::WriteString(const v8::Arguments& args) {
   int result = xmlTextWriterWriteString(writer->textWriter,
       (const xmlChar*)*string);
 
-  return scope.Close(v8::Number::New((double)result));
+  NanReturnValue(NanNew<v8::Number>((double)result));
 }
 
 void
 XmlTextWriter::Initialize(v8::Handle<v8::Object> target) {
-  v8::HandleScope scope;
+  NanScope();
 
   v8::Local<v8::FunctionTemplate> writer_t =
-    v8::FunctionTemplate::New(NewTextWriter);
+    NanNew<v8::FunctionTemplate>(NewTextWriter);
 
-  v8::Persistent<v8::FunctionTemplate> xml_writer_template =
-    v8::Persistent<v8::FunctionTemplate>::New(writer_t);
+  v8::Persistent<v8::FunctionTemplate> xml_writer_template;
+  NanAssignPersistent(xml_writer_template, writer_t);
 
-  xml_writer_template->InstanceTemplate()->SetInternalFieldCount(1);
 
-  NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
+  writer_t->InstanceTemplate()->SetInternalFieldCount(1);
+
+  NODE_SET_PROTOTYPE_METHOD(writer_t,
           "_openMemory",
           XmlTextWriter::OpenMemory);
 
-  NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
+  NODE_SET_PROTOTYPE_METHOD(writer_t,
           "_bufferContent",
           XmlTextWriter::BufferContent);
 
-  NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
+  NODE_SET_PROTOTYPE_METHOD(writer_t,
           "_bufferEmpty",
           XmlTextWriter::BufferEmpty);
 
-  NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
+  NODE_SET_PROTOTYPE_METHOD(writer_t,
           "_startDocument",
           XmlTextWriter::StartDocument);
 
-  NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
+  NODE_SET_PROTOTYPE_METHOD(writer_t,
           "_endDocument",
           XmlTextWriter::EndDocument);
 
-  NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
+  NODE_SET_PROTOTYPE_METHOD(writer_t,
           "_startElementNS",
           XmlTextWriter::StartElementNS);
 
-  NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
+  NODE_SET_PROTOTYPE_METHOD(writer_t,
           "_endElement",
           XmlTextWriter::EndElement);
 
-  NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
+  NODE_SET_PROTOTYPE_METHOD(writer_t,
           "_startAttributeNS",
           XmlTextWriter::StartAttributeNS);
 
-  NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
+  NODE_SET_PROTOTYPE_METHOD(writer_t,
           "_endAttribute",
           XmlTextWriter::EndAttribute);
 
-  NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
+  NODE_SET_PROTOTYPE_METHOD(writer_t,
           "_startCdata",
           XmlTextWriter::StartCdata);
 
-  NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
+  NODE_SET_PROTOTYPE_METHOD(writer_t,
           "_endCdata",
           XmlTextWriter::EndCdata);
 
-  NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
+  NODE_SET_PROTOTYPE_METHOD(writer_t,
           "_startComment",
           XmlTextWriter::StartComment);
 
-  NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
+  NODE_SET_PROTOTYPE_METHOD(writer_t,
           "_endComment",
           XmlTextWriter::EndComment);
 
-  NODE_SET_PROTOTYPE_METHOD(xml_writer_template,
+  NODE_SET_PROTOTYPE_METHOD(writer_t,
           "_writeString",
           XmlTextWriter::WriteString);
 
-  target->Set(v8::String::NewSymbol("TextWriter"),
-              xml_writer_template->GetFunction());
+  target->Set(NanNew<v8::String>("TextWriter"),
+              writer_t->GetFunction());
 }
 }  // namespace libxmljs
