@@ -1,5 +1,5 @@
 # Libxmljs
-[![Build Status](https://secure.travis-ci.org/libxmljs/libxmljs.svg?branch=master)](http://travis-ci.org/libxmljs/libxmljs)
+[![Build Status](https://secure.travis-ci.org/znerol/libxmljs.svg?branch=master)](http://travis-ci.org/znerol/libxmljs)
 
 LibXML bindings for [node.js](http://nodejs.org/)
 
